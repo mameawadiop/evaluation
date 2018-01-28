@@ -866,17 +866,25 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
         {
             try
             {
-                // Get all roles for the site
-                Site site = siteService.getSite( groupID.getSiteID() );
-                Set<Role> siteRoles = site.getRoles();
-                List<String> siteRolesWithPerm = new ArrayList<>( siteRoles.size() );
 
+                // Get all roles for the section as a normal section-aware tool
+                Site site = siteService.getSite( groupID.getSiteID() );
+                Group selectedGroup = null;
+				//Find the section associated to the evalGroup
+                for (Group group: site.getGroups()){
+                    if (group.getProviderGroupId() != null && group.getProviderGroupId().equalsIgnoreCase(groupID.sectionID)){
+                        selectedGroup = group;
+                        break;
+                    }
+                }
+                Set<Role> sectionRoles = selectedGroup.getRoles();
+                List<String> sectionRolesWithPerm = new ArrayList<>( sectionRoles.size() );
                 // Determine which roles have the given permission
-                for( Role role : siteRoles )
+                for( Role role : sectionRoles )
                 {
                     if( role.getAllowedFunctions().contains( permission ) )
                     {
-                        siteRolesWithPerm.add( role.getId() );
+                        sectionRolesWithPerm.add( role.getId() );
                     }
                 }
 
@@ -887,7 +895,7 @@ public class EvalExternalLogicImpl implements EvalExternalLogic {
                 // Loop through the user role map; if the user's section role is in the list of site roles with the permission, add the user to the list
                 for( Entry<String, String> userRoleEntry : userRoleMap.entrySet() )
                 {
-                    if( siteRolesWithPerm.contains( userRoleEntry.getValue() ) )
+                    if( sectionRolesWithPerm.contains( userRoleEntry.getValue() ) )
                     {
                         String userEID;
                         try { userEID = userDirectoryService.getUserId( userRoleEntry.getKey() ); }
