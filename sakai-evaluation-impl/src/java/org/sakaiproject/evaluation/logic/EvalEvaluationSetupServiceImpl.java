@@ -102,6 +102,11 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
         this.evaluationService = evaluationService;
     }
 
+    private EvalExternalLogic externalLogic;
+    public void setExternalLogic(EvalExternalLogic externalLogic) {
+        this.externalLogic = externalLogic;
+    }
+
     private EvalSecurityChecksImpl securityChecks;
     public void setSecurityChecks(EvalSecurityChecksImpl securityChecks) {
         this.securityChecks = securityChecks;
