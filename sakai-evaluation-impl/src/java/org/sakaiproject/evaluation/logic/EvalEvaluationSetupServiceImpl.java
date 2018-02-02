@@ -1460,17 +1460,22 @@ public class EvalEvaluationSetupServiceImpl implements EvalEvaluationSetupServic
             // expand the actual new set of nodes into a complete list of nodes including children
             Set<String> allNodeIds = hierarchyLogic.getAllChildrenNodes(nodes, true);
             allNodeIds.addAll(currentNodeIds);
-            Map<String, Set<String>> allEvalGroupIds = hierarchyLogic.getEvalGroupsForNodes( allNodeIds.toArray(new String[] {}) );
+
             Map<String, Set<String>> allEvalGroupIds = new HashMap<String, Set<String>> ();
             Set<String> evalGroups;
             Set<String> sectionAwareEvalGroups = new HashSet<String>();
-            //For an evaluation section-aware, retrieve the sections associated to the nodes
-            if (eval.getSectionAwareness()){
-                for (String nodeid: allNodeIds){
+
+            //For an evaluation section-aware, once all the nodes are retrieved
+            //transform the site related evalGroups into section related evalGroups
+            //whether the node is rule based or external hierarchy based
+            if (eval.getSectionAwareness() )
+            {
+                for (String nodeid: allNodeIds)
+                {
                 evalGroups =  hierarchyLogic.getEvalGroupsForNode(nodeid);
 
                     sectionAwareEvalGroups = new HashSet<String>();
-                    for (String evalGroupId: evalGroups) {
+                    for (String evalGroupId : evalGroups) {
                         for (EvalGroup evalGroup : externalLogic.makeEvalGroupObjectsForSectionAwareness(evalGroupId)) {
                             sectionAwareEvalGroups.add(evalGroup.evalGroupId);
                         }
